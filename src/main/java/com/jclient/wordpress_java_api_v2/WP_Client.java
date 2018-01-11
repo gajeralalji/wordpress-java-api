@@ -13,14 +13,13 @@ import util.RESTUtil;
  * Hello world!
  *
  */
-public class WP_Client 
-{
+public class WP_Client {
 	/**
 	 * Base URL of wordpress rest API ex: http://localhost/wordpress/wp-json/wp/v2/
 	 */
 	private String baseURL;
-	
-    public String getBaseURL() {
+
+	public String getBaseURL() {
 		return baseURL;
 	}
 
@@ -28,41 +27,56 @@ public class WP_Client
 		this.baseURL = baseURL;
 	}
 
-	public static void main( String[] args )
-    {
-		WP_Client wp= new WP_Client("http://localhost/wordpress/wp-json/wp/v2/");
-		Posts p;
+	public static void main(String[] args) {
+		WP_Client wp = new WP_Client("http://localhost/wordpress/wp-json/wp/v2/");
 		try {
-			p = wp.getPosts(); 
-			System.out.println( "First Post Title: " + p.getPost().get(0).getTitle().getRendered());
+			System.out.println("First Post Title: " + wp.getPosts().getPost().get(0).getTitle().getRendered());
+			System.out.println("First Post Title: " + wp.getPostById("2").getTitle().getRendered());
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-      
-    }
-    
-    public WP_Client(String baseURL) {
-    	this.baseURL = baseURL;
-    }
-    
-    /**
-     * @param path is url path to posts after base URL
-     * @throws Exception 
-     */
-    public Posts getPosts() throws Exception {   	
-    	RESTUtil restUtil= new RESTUtil();
-    	Posts posts =new Posts();
-    
-    	List<Post> postList= restUtil.sendGetRestJArrayRequest(endPointURL("posts"), null, new TypeToken<List<Post>>(){}.getType());
-    	posts.setPost(postList);
-    	
-    	return posts;   	
-    }
+
+	}
+
+	public WP_Client(String baseURL) {
+		this.baseURL = baseURL;
+	}
+
+	/**
+	 * Method to retrive all the posts
+	 * 
+	 * @return Posts
+	 * @throws Exception
+	 */
+	public Posts getPosts() throws Exception {
+		RESTUtil restUtil = new RESTUtil();
+		Posts posts = new Posts();
+		List<Post> postList = restUtil.sendGetRestJArrayRequest(endPointURL("posts"), null,
+				new TypeToken<List<Post>>() {
+				}.getType());
+		posts.setPost(postList);
+
+		return posts;
+	}
+
+	/**
+	 * Mrthod to retrive post by id
+	 * 
+	 * @param id
+	 *            : Pass id of the post to search
+	 * @throws Exception
+	 */
+	public Post getPostById(String id) throws Exception {
+		RESTUtil restUtil = new RESTUtil();
+		Post post = restUtil.sendGetRestRequest(endPointURL("posts/" + id), null, Post.class);
+		return post;
+	}
 
 	private String endPointURL(String path) {
 		// TODO Auto-generated method stub
-		return baseURL+path;
+		return baseURL + path;
 	}
-    
+
 }
