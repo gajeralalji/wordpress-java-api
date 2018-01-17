@@ -1,6 +1,5 @@
 package com.jclient.wordpress_java_api_v2;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +7,8 @@ import java.util.Map;
 import com.google.gson.reflect.TypeToken;
 import com.jclient.wordpress_java_api_v2.posts.Post;
 import com.jclient.wordpress_java_api_v2.posts.Posts;
+import com.jclient.wordpress_java_api_v2.users.User;
+import com.jclient.wordpress_java_api_v2.users.Users;
 
 import util.RESTUtil;
 
@@ -95,6 +96,57 @@ public class WP_Client {
 		Post post = restUtil.sendGetRestRequest(endPointURL("posts/" + id), null, Post.class);
 		return post;
 	}
+	
+	
+	//****** Users *********//
+	/**
+	 * Method to retrive all the users
+	 * 
+	 * @return Users
+	 * @throws Exception
+	 */
+	public Users getUsers() throws Exception {
+		RESTUtil restUtil = new RESTUtil();
+		Users users = new Users();
+		List<User> userList = restUtil.sendGetRestJArrayRequest(endPointURL("users"), null,
+				new TypeToken<List<User>>() {
+				}.getType());
+		users.setUser(userList);
+
+		return users;
+	}
+	
+	/**
+	 * Method to retrive all the users with applied filter parameter like per_page =2 
+	 * @param criteria : send map with key value pair like criteria.add("per_page","2") info https://developer.wordpress.org/rest-api/reference/users/#arguments
+	 * @return Users
+	 * @throws Exception
+	 */
+	public Users getFilteredUsers(Map<String, String>  criteria) throws Exception {
+		RESTUtil restUtil = new RESTUtil();
+		Users users = new Users();
+		List<User> userList = restUtil.sendGetRestJArrayRequest(endPointURL("users"), criteria,
+				new TypeToken<List<User>>() {
+				}.getType());
+		users.setUser(userList);
+
+		return users;
+	}
+
+	/**
+	 * Mrthod to retrieve user by id
+	 * 
+	 * @param id
+	 *            : Pass id of the user to search
+	 * @throws Exception
+	 */
+	public User getUserById(String id) throws Exception {
+		RESTUtil restUtil = new RESTUtil();
+		User user = restUtil.sendGetRestRequest(endPointURL("users/" + id), null, User.class);
+		return user;
+	}
+	
+	//----- End Users-------
 
 	private String endPointURL(String path) {
 		// TODO Auto-generated method stub
