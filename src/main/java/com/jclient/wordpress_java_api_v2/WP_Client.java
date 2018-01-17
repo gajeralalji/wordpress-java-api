@@ -1,7 +1,9 @@
 package com.jclient.wordpress_java_api_v2;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gson.reflect.TypeToken;
 import com.jclient.wordpress_java_api_v2.posts.Post;
@@ -31,7 +33,10 @@ public class WP_Client {
 		WP_Client wp = new WP_Client("http://localhost/wordpress/wp-json/wp/v2/");
 		try {
 			System.out.println("First Post Title: " + wp.getPosts().getPost().get(0).getTitle().getRendered());
-			System.out.println("First Post Title: " + wp.getPostById("2").getTitle().getRendered());
+			System.out.println("First Post Title: " + wp.getPostById("1").getTitle().getRendered());
+			Map<String, String>  criteria = new HashMap<String, String>();
+			criteria.put("per_page", "3");
+			System.out.println("filtered "+wp.getFilteredPosts(criteria).getPost().size());
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -54,6 +59,23 @@ public class WP_Client {
 		RESTUtil restUtil = new RESTUtil();
 		Posts posts = new Posts();
 		List<Post> postList = restUtil.sendGetRestJArrayRequest(endPointURL("posts"), null,
+				new TypeToken<List<Post>>() {
+				}.getType());
+		posts.setPost(postList);
+
+		return posts;
+	}
+	
+	/**
+	 * Method to retrive all the posts with applied filter parameter like per_page =2 
+	 * @param criteria : send map with key value pair like criteria.add("per_page","2") info https://developer.wordpress.org/rest-api/reference/posts/#arguments
+	 * @return Posts
+	 * @throws Exception
+	 */
+	public Posts getFilteredPosts(Map<String, String>  criteria) throws Exception {
+		RESTUtil restUtil = new RESTUtil();
+		Posts posts = new Posts();
+		List<Post> postList = restUtil.sendGetRestJArrayRequest(endPointURL("posts"), criteria,
 				new TypeToken<List<Post>>() {
 				}.getType());
 		posts.setPost(postList);
