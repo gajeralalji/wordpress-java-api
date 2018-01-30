@@ -79,7 +79,10 @@ public class Post {
     @SerializedName("_links")
     @Expose
     private Links links;
-
+    @SerializedName("_embedded")
+    @Expose
+    private Embedded embedded;
+    
     public Integer getId() {
         return id;
     }
@@ -270,6 +273,14 @@ public class Post {
 
     public void setLinks(Links links) {
         this.links = links;
+    }
+    
+    public Embedded getEmbedded() {
+        return embedded;
+    }
+
+    public void setEmbedded(Embedded embedded) {
+        this.embedded = embedded;
     }
 
 }

@@ -33,11 +33,11 @@ public class WP_Client {
 	public static void main(String[] args) {
 		WP_Client wp = new WP_Client("http://localhost/wordpress/wp-json/wp/v2/");
 		try {
-			System.out.println("First Post Title: " + wp.getPosts().getPost().get(0).getTitle().getRendered());
-			System.out.println("First Post Title: " + wp.getPostById("1").getTitle().getRendered());
+			System.out.println("First Post Title: " + wp.getPosts(false).getPost().get(0).getTitle().getRendered());
+			System.out.println("First Post Title: " + wp.getPostById("1",true).getTitle().getRendered());
 			Map<String, String>  criteria = new HashMap<String, String>();
 			criteria.put("per_page", "3");
-			System.out.println("filtered "+wp.getFilteredPosts(criteria).getPost().size());
+			System.out.println("filtered "+wp.getFilteredPosts(criteria,true).getPost().size());
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -52,14 +52,14 @@ public class WP_Client {
 
 	/**
 	 * Method to retrive all the posts
-	 * 
+	 * @param embeded if true returns extra elements where embeded is supported
 	 * @return Posts
 	 * @throws Exception
 	 */
-	public Posts getPosts() throws Exception {
+	public Posts getPosts(boolean embeded) throws Exception {
 		RESTUtil restUtil = new RESTUtil();
 		Posts posts = new Posts();
-		List<Post> postList = restUtil.sendGetRestJArrayRequest(endPointURL("posts"), null,
+		List<Post> postList = restUtil.sendGetRestJArrayRequest(endPointURL(embeded? "posts?_embed" : "posts"), null,
 				new TypeToken<List<Post>>() {
 				}.getType());
 		posts.setPost(postList);
@@ -73,9 +73,11 @@ public class WP_Client {
 	 * @return Posts
 	 * @throws Exception
 	 */
-	public Posts getFilteredPosts(Map<String, String>  criteria) throws Exception {
+	public Posts getFilteredPosts(Map<String, String>  criteria, boolean embeded) throws Exception {
 		RESTUtil restUtil = new RESTUtil();
 		Posts posts = new Posts();
+		if(embeded)
+			criteria.put("_embed", "true");
 		List<Post> postList = restUtil.sendGetRestJArrayRequest(endPointURL("posts"), criteria,
 				new TypeToken<List<Post>>() {
 				}.getType());
@@ -91,9 +93,9 @@ public class WP_Client {
 	 *            : Pass id of the post to search
 	 * @throws Exception
 	 */
-	public Post getPostById(String id) throws Exception {
+	public Post getPostById(String id, boolean embeded) throws Exception {
 		RESTUtil restUtil = new RESTUtil();
-		Post post = restUtil.sendGetRestRequest(endPointURL("posts/" + id), null, Post.class);
+		Post post = restUtil.sendGetRestRequest(endPointURL("posts/" + id + (embeded? "?_embed" : "")), null, Post.class);
 		return post;
 	}
 	
