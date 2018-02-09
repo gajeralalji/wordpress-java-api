@@ -200,6 +200,47 @@ public class RESTUtil {
         return gson.fromJson(jsonObject, responseClass);
 
     }
+    
+    /** All In One Method for your REST service call , this method is using Delete request.
+     * @param <T>
+     * @param endPointURL : url as string for your REST call
+     * @param requestClass : pass your object of request class which will go in rest request as PUT method
+     * @param responseClass : pass your class type u want in response:  for Ex: AddressResponse.Class
+     * @param tokem : optional - if given passed in header as authorization
+     * @return your desired object of class which u specified in responseClass param
+     * @throws Exception
+     */
+    public <T> T sendDeleteRestRequest(java.lang.String endPointURL,
+                                     Object requestClass,
+                                     Class<T> responseClass,String token) throws Exception {
+
+        Gson gson = new Gson();
+        //store request
+        jsonRequest = gson.toJson(requestClass);
+        URL url = new URL(endPointURL);
+        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+        conn.setConnectTimeout(CONN_TIME_OUT);
+        conn.setReadTimeout(READ_TIME_OUT);
+        conn.setDoOutput(true);
+        conn.setRequestMethod("DELETE");
+        conn.setRequestProperty("Content-Type", "application/json");
+        //set token
+        if(token!=null)
+        	conn.setRequestProperty("Authorization", "Basic "+token);
+        OutputStream out = (conn.getOutputStream());
+        out.write(gson.toJson(requestClass).getBytes());
+        out.close();
+
+        JsonReader reader =
+            new JsonReader(new InputStreamReader(conn.getInputStream()));
+        JsonParser parser = new JsonParser();
+        JsonElement rootElement = parser.parse(reader);
+        jsonObject = rootElement.getAsJsonObject();
+        if (responseClass == null)
+            return null;
+        return gson.fromJson(jsonObject, responseClass);
+
+    }
 
 
     public JsonObject getJsonObject() {

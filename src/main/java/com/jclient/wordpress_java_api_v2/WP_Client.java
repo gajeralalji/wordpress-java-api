@@ -99,6 +99,19 @@ public class WP_Client {
 		return post;
 	}
 	
+	/**
+	 * Mrthod to delete post by id
+	 * 
+	 * @param id
+	 *            : Pass id of the post to search
+	 * @throws Exception
+	 */
+	public Post deletePostById(String id, String token,boolean embeded) throws Exception {
+		RESTUtil restUtil = new RESTUtil();
+		Post post = restUtil.sendDeleteRestRequest(endPointURL("posts/" + id + (embeded? "?_embed" : "")), null, Post.class,token);
+		return post;
+	}
+	
 	
 	//****** Users *********//
 	/**
